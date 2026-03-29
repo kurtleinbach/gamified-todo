@@ -3,8 +3,9 @@ import {
   View, StyleSheet, ScrollView, Modal, TouchableOpacity,
   KeyboardAvoidingView, Platform,
 } from 'react-native';
-import { Text, TextInput, Button, SegmentedButtons, Switch } from 'react-native-paper';
+import { Text, TextInput, Button, Switch } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Colors, PriorityMeta } from '@/constants/theme';
 import type { Task, Priority, RecurPattern } from '@/types';
 import type { CreateTaskInput } from '@/store/taskStore';
@@ -24,12 +25,20 @@ const RECUR_PATTERNS: Array<{ value: RecurPattern; label: string }> = [
   { value: 'monthly', label: 'Monthly' },
 ];
 
+function dateToString(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 export default function TaskFormModal({ visible, onClose, onSave, initialValues, title = 'New Task' }: Props) {
   const [taskTitle, setTaskTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<Priority>('medium');
   const [category, setCategory] = useState('');
-  const [dueDate, setDueDate] = useState('');
+  const [dueDate, setDueDate] = useState<Date | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [notes, setNotes] = useState('');
   const [isRecurring, setIsRecurring] = useState(false);
   const [recurPattern, setRecurPattern] = useState<RecurPattern>('daily');
@@ -40,13 +49,13 @@ export default function TaskFormModal({ visible, onClose, onSave, initialValues,
       setDescription(initialValues.description ?? '');
       setPriority(initialValues.priority ?? 'medium');
       setCategory(initialValues.category ?? '');
-      setDueDate(initialValues.dueDate ?? '');
+      setDueDate(initialValues.dueDate ? new Date(initialValues.dueDate) : null);
       setNotes(initialValues.notes ?? '');
       setIsRecurring(initialValues.isRecurring ?? false);
       setRecurPattern(initialValues.recurPattern ?? 'daily');
     } else {
       setTaskTitle(''); setDescription(''); setPriority('medium');
-      setCategory(''); setDueDate(''); setNotes('');
+      setCategory(''); setDueDate(null); setNotes('');
       setIsRecurring(false); setRecurPattern('daily');
     }
   }, [visible, initialValues]);
@@ -58,12 +67,19 @@ export default function TaskFormModal({ visible, onClose, onSave, initialValues,
       description: description.trim(),
       priority,
       category: category.trim(),
-      dueDate: dueDate.trim() || null,
+      dueDate: dueDate ? dateToString(dueDate) : null,
       notes: notes.trim(),
       isRecurring,
       recurPattern: isRecurring ? recurPattern : null,
     });
     onClose();
+  }
+
+  function handleDateChange(event: DateTimePickerEvent, selected?: Date) {
+    setShowDatePicker(Platform.OS === 'ios'); // keep open on iOS
+    if (event.type === 'set' && selected) {
+      setDueDate(selected);
+    }
   }
 
   return (
@@ -149,19 +165,42 @@ export default function TaskFormModal({ visible, onClose, onSave, initialValues,
               placeholderTextColor={Colors.textMuted}
             />
 
-            <TextInput
-              label="Due Date (YYYY-MM-DD)"
-              value={dueDate}
-              onChangeText={setDueDate}
-              mode="outlined"
-              outlineColor={Colors.border}
-              activeOutlineColor={Colors.purple500}
-              textColor={Colors.textPrimary}
-              theme={{ colors: { background: Colors.card } }}
-              style={styles.input}
-              placeholder="2026-04-01"
-              placeholderTextColor={Colors.textMuted}
-            />
+            {/* Date picker field */}
+            <Text style={styles.label}>Due Date</Text>
+            <TouchableOpacity
+              style={styles.dateField}
+              onPress={() => setShowDatePicker(true)}
+              activeOpacity={0.7}
+            >
+              <MaterialCommunityIcons
+                name="calendar-outline"
+                size={20}
+                color={dueDate ? Colors.purple400 : Colors.textMuted}
+              />
+              <Text style={[styles.dateFieldText, !dueDate && styles.datePlaceholder]}>
+                {dueDate
+                  ? dueDate.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })
+                  : 'Select a due date'}
+              </Text>
+              {dueDate && (
+                <TouchableOpacity
+                  onPress={(e) => { e.stopPropagation(); setDueDate(null); }}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                  <MaterialCommunityIcons name="close-circle" size={18} color={Colors.textMuted} />
+                </TouchableOpacity>
+              )}
+            </TouchableOpacity>
+
+            {showDatePicker && (
+              <DateTimePicker
+                value={dueDate ?? new Date()}
+                mode="date"
+                display="default"
+                minimumDate={new Date()}
+                onChange={handleDateChange}
+              />
+            )}
 
             <View style={styles.switchRow}>
               <Text style={styles.switchLabel}>Recurring Task</Text>
@@ -248,6 +287,14 @@ const styles = StyleSheet.create({
     borderWidth: 1, alignItems: 'center',
   },
   priorityBtnLabel: { fontSize: 13, fontWeight: '700' },
+  dateField: {
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    backgroundColor: Colors.card, borderRadius: 8,
+    borderWidth: 1, borderColor: Colors.border,
+    paddingHorizontal: 14, paddingVertical: 14,
+  },
+  dateFieldText: { flex: 1, color: Colors.textPrimary, fontSize: 14 },
+  datePlaceholder: { color: Colors.textMuted },
   switchRow: {
     flexDirection: 'row', alignItems: 'center',
     justifyContent: 'space-between', paddingVertical: 4,

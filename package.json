@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.2.0",
+    "@react-native-community/datetimepicker": "^9.1.0",
     "@types/expo__vector-icons": "^9.0.1",
     "expo": "55.0.10-canary-20260328-bdc6273",
     "expo-crypto": "^55.0.11-canary-20260328-bdc6273",
