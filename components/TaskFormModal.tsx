@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  View, StyleSheet, ScrollView, Modal, TouchableOpacity,
-  KeyboardAvoidingView, Platform,
+  View, StyleSheet, ScrollView, Modal, TouchableOpacity, Platform,
 } from 'react-native';
 import { Text, TextInput, Button, Switch } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -84,19 +83,14 @@ export default function TaskFormModal({ visible, onClose, onSave, initialValues,
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <KeyboardAvoidingView
-        style={styles.kavContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={0}
-      >
-        <View style={styles.backdrop}>
-          <View style={styles.sheet}>
-            <View style={styles.header}>
-              <Text style={styles.headerTitle}>{title}</Text>
-              <TouchableOpacity onPress={onClose}>
-                <MaterialCommunityIcons name="close" size={22} color={Colors.textMuted} />
-              </TouchableOpacity>
-            </View>
+      <View style={styles.backdrop}>
+        <View style={styles.sheet}>
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>{title}</Text>
+            <TouchableOpacity onPress={onClose}>
+              <MaterialCommunityIcons name="close" size={22} color={Colors.textMuted} />
+            </TouchableOpacity>
+          </View>
 
           <ScrollView
             style={styles.scroll}
@@ -254,15 +248,13 @@ export default function TaskFormModal({ visible, onClose, onSave, initialValues,
               Save Task
             </Button>
           </ScrollView>
-          </View>
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  kavContainer: { flex: 1 },
   backdrop: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end',
   },
