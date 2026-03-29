@@ -8,6 +8,7 @@ interface DevLogState {
   isOpen: boolean;
   loadEntries: () => Promise<void>;
   addEntry: (type: DevLogType, title: string, description: string) => Promise<void>;
+  updateEntry: (id: string, type: DevLogType, title: string, description: string) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
   openLog: () => void;
   closeLog: () => void;
@@ -50,6 +51,19 @@ export const useDevLogStore = create<DevLogState>((set, get) => ({
     );
     const entry: DevLogEntry = { id, type, title, description, createdAt: now };
     set(state => ({ entries: [entry, ...state.entries] }));
+  },
+
+  updateEntry: async (id, type, title, description) => {
+    const db = await getDb();
+    await db.runAsync(
+      'UPDATE dev_log SET type = ?, title = ?, description = ? WHERE id = ?',
+      [type, title, description, id]
+    );
+    set(state => ({
+      entries: state.entries.map(e =>
+        e.id === id ? { ...e, type, title, description } : e
+      ),
+    }));
   },
 
   deleteEntry: async (id) => {

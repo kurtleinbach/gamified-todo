@@ -7,7 +7,7 @@ import { Text, TextInput, Button, Chip } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
 import { useDevLogStore } from '@/store/devLogStore';
-import type { DevLogType } from '@/types';
+import type { DevLogEntry, DevLogType } from '@/types';
 
 const TYPES: Array<{ value: DevLogType; label: string; icon: string; color: string }> = [
   { value: 'feature',     label: 'Feature',     icon: 'lightbulb-outline',  color: Colors.purple400 },
@@ -17,8 +17,9 @@ const TYPES: Array<{ value: DevLogType; label: string; icon: string; color: stri
 ];
 
 export default function DevLogOverlay() {
-  const { isOpen, closeLog, entries, addEntry, deleteEntry, formatEntryForClaude, formatAllForClaude } = useDevLogStore();
+  const { isOpen, closeLog, entries, addEntry, updateEntry, deleteEntry, formatEntryForClaude, formatAllForClaude } = useDevLogStore();
   const [view, setView] = useState<'list' | 'new'>('list');
+  const [editingEntry, setEditingEntry] = useState<DevLogEntry | null>(null);
   const [selectedType, setSelectedType] = useState<DevLogType>('feature');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -27,16 +28,29 @@ export default function DevLogOverlay() {
     setTitle('');
     setDescription('');
     setSelectedType('feature');
+    setEditingEntry(null);
     setView('list');
   }
 
-  async function handleAdd() {
+  function handleEditPress(entry: DevLogEntry) {
+    setEditingEntry(entry);
+    setSelectedType(entry.type);
+    setTitle(entry.title);
+    setDescription(entry.description);
+    setView('new');
+  }
+
+  async function handleSave() {
     if (!title.trim()) return;
-    await addEntry(selectedType, title.trim(), description.trim());
+    if (editingEntry) {
+      await updateEntry(editingEntry.id, selectedType, title.trim(), description.trim());
+    } else {
+      await addEntry(selectedType, title.trim(), description.trim());
+    }
     resetForm();
   }
 
-  async function handleCopyEntry(entry: (typeof entries)[0]) {
+  async function handleCopyEntry(entry: DevLogEntry) {
     await Share.share({ message: formatEntryForClaude(entry) });
   }
 
@@ -119,9 +133,14 @@ export default function DevLogOverlay() {
                         <MaterialCommunityIcons name="content-copy" size={14} color={Colors.blue400} />
                         <Text style={styles.copyLabel}>Copy for Claude</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => handleDelete(entry.id)}>
-                        <MaterialCommunityIcons name="trash-can-outline" size={18} color={Colors.error} />
-                      </TouchableOpacity>
+                      <View style={styles.entryIcons}>
+                        <TouchableOpacity onPress={() => handleEditPress(entry)} style={styles.iconBtn}>
+                          <MaterialCommunityIcons name="pencil-outline" size={18} color={Colors.purple400} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleDelete(entry.id)} style={styles.iconBtn}>
+                          <MaterialCommunityIcons name="trash-can-outline" size={18} color={Colors.error} />
+                        </TouchableOpacity>
+                      </View>
                     </View>
                   </View>
                 );
@@ -179,12 +198,12 @@ export default function DevLogOverlay() {
 
               <Button
                 mode="contained"
-                onPress={handleAdd}
+                onPress={handleSave}
                 disabled={!title.trim()}
                 buttonColor={Colors.purple500}
                 style={styles.submitBtn}
               >
-                Save Entry
+                {editingEntry ? 'Update Entry' : 'Save Entry'}
               </Button>
             </ScrollView>
           )}
@@ -240,6 +259,7 @@ const styles = StyleSheet.create({
   entryTitle: { color: Colors.textPrimary, fontWeight: '600', fontSize: 14 },
   entryDesc: { color: Colors.textMuted, fontSize: 12 },
   entryActions: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 },
+  entryIcons: { flexDirection: 'row', alignItems: 'center' },
   copyBtn: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   copyLabel: { color: Colors.blue400, fontSize: 12, fontWeight: '600' },
   formLabel: { color: Colors.textSecondary, fontSize: 12, fontWeight: '600', marginTop: 4 },

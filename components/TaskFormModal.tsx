@@ -36,7 +36,7 @@ export default function TaskFormModal({ visible, onClose, onSave, initialValues,
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<Priority>('medium');
   const [category, setCategory] = useState('');
-  const [dueDate, setDueDate] = useState<Date | null>(null);
+  const [dueDate, setDueDate] = useState<Date | null>(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [notes, setNotes] = useState('');
   const [isRecurring, setIsRecurring] = useState(false);
@@ -48,13 +48,13 @@ export default function TaskFormModal({ visible, onClose, onSave, initialValues,
       setDescription(initialValues.description ?? '');
       setPriority(initialValues.priority ?? 'medium');
       setCategory(initialValues.category ?? '');
-      setDueDate(initialValues.dueDate ? new Date(initialValues.dueDate) : null);
+      setDueDate(initialValues.dueDate ? new Date(initialValues.dueDate) : new Date());
       setNotes(initialValues.notes ?? '');
       setIsRecurring(initialValues.isRecurring ?? false);
       setRecurPattern(initialValues.recurPattern ?? 'daily');
     } else {
       setTaskTitle(''); setDescription(''); setPriority('medium');
-      setCategory(''); setDueDate(null); setNotes('');
+      setCategory(''); setDueDate(new Date()); setNotes('');
       setIsRecurring(false); setRecurPattern('daily');
     }
   }, [visible, initialValues]);
