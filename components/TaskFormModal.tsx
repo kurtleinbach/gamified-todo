@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   View, StyleSheet, ScrollView, Modal, TouchableOpacity,
+  KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { Text, TextInput, Button, SegmentedButtons, Switch } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -67,16 +68,25 @@ export default function TaskFormModal({ visible, onClose, onSave, initialValues,
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <View style={styles.backdrop}>
-        <View style={styles.sheet}>
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>{title}</Text>
-            <TouchableOpacity onPress={onClose}>
-              <MaterialCommunityIcons name="close" size={22} color={Colors.textMuted} />
-            </TouchableOpacity>
-          </View>
+      <KeyboardAvoidingView
+        style={styles.kavContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={0}
+      >
+        <View style={styles.backdrop}>
+          <View style={styles.sheet}>
+            <View style={styles.header}>
+              <Text style={styles.headerTitle}>{title}</Text>
+              <TouchableOpacity onPress={onClose}>
+                <MaterialCommunityIcons name="close" size={22} color={Colors.textMuted} />
+              </TouchableOpacity>
+            </View>
 
-          <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+          <ScrollView
+            style={styles.scroll}
+            contentContainerStyle={styles.content}
+            keyboardShouldPersistTaps="handled"
+          >
             <TextInput
               label="Title *"
               value={taskTitle}
@@ -205,13 +215,15 @@ export default function TaskFormModal({ visible, onClose, onSave, initialValues,
               Save Task
             </Button>
           </ScrollView>
+          </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  kavContainer: { flex: 1 },
   backdrop: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end',
   },

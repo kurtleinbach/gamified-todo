@@ -1,7 +1,7 @@
 import { MD3DarkTheme } from 'react-native-paper';
 
 export const Colors = {
-  // Purples
+  // Purples — accents only
   purple900: '#1E0A3C',
   purple800: '#2D1563',
   purple700: '#4C1D95',
@@ -12,7 +12,7 @@ export const Colors = {
   purple200: '#C4B5FD',
   purple100: '#EDE9FE',
 
-  // Blues
+  // Blues — accents only
   blue900: '#0A1628',
   blue800: '#1E3A5F',
   blue700: '#1D4ED8',
@@ -23,45 +23,46 @@ export const Colors = {
   blue200: '#BFDBFE',
   blue100: '#DBEAFE',
 
-  // Backgrounds
-  bg: '#0F0A1E',
-  surface: '#1A1033',
-  card: '#241545',
-  cardAlt: '#1E1640',
-  border: '#3D2A6E',
+  // Neutral backgrounds — the main palette
+  bg:       '#111214',
+  surface:  '#18191C',
+  card:     '#1F2023',
+  cardAlt:  '#232528',
+  border:   '#2A2C30',
+  borderLight: '#363840',
 
   // Text
-  textPrimary: '#F0EBFF',
-  textSecondary: '#A78BFA',
-  textMuted: '#6B5A9E',
+  textPrimary:   '#ECEEF2',
+  textSecondary: '#9BA3AF',
+  textMuted:     '#555D6B',
 
   // Semantic
   success: '#22C55E',
   warning: '#F59E0B',
-  error: '#EF4444',
-  xp: '#FACC15',
-  coins: '#FB923C',
+  error:   '#EF4444',
+  xp:      '#FACC15',
+  coins:   '#FB923C',
 
-  // Priority colors
-  priorityLow: '#22C55E',
+  // Priority — kept vivid so they stand out on neutral backgrounds
+  priorityLow:    '#22C55E',
   priorityMedium: '#3B82F6',
-  priorityHigh: '#F59E0B',
-  priorityEpic: '#A855F7',
+  priorityHigh:   '#F59E0B',
+  priorityEpic:   '#A855F7',
 };
 
 export const AppTheme = {
   ...MD3DarkTheme,
   colors: {
     ...MD3DarkTheme.colors,
-    primary: Colors.purple500,
-    secondary: Colors.blue500,
-    background: Colors.bg,
-    surface: Colors.surface,
-    surfaceVariant: Colors.card,
-    onBackground: Colors.textPrimary,
-    onSurface: Colors.textPrimary,
-    outline: Colors.border,
-    error: Colors.error,
+    primary:         Colors.purple500,
+    secondary:       Colors.blue500,
+    background:      Colors.bg,
+    surface:         Colors.surface,
+    surfaceVariant:  Colors.card,
+    onBackground:    Colors.textPrimary,
+    onSurface:       Colors.textPrimary,
+    outline:         Colors.border,
+    error:           Colors.error,
   },
 };
 

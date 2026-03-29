@@ -31,7 +31,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PaperProvider theme={AppTheme}>
-        <StatusBar style="light" backgroundColor="#0F0A1E" />
+        <StatusBar style="light" backgroundColor="#111214" />
         <Stack screenOptions={{ headerShown: false }} />
         <DevLogOverlay />
       </PaperProvider>

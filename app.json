@@ -10,14 +10,14 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0F0A1E"
+      "backgroundColor": "#111214"
     },
     "ios": {
       "supportsTablet": false
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#0F0A1E",
+        "backgroundColor": "#111214",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"

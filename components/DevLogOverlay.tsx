@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   View, StyleSheet, ScrollView, TouchableOpacity,
-  Modal, Share, Alert,
+  Modal, Share, Alert, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { Text, TextInput, Button, Chip } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -55,6 +55,11 @@ export default function DevLogOverlay() {
 
   return (
     <Modal visible={isOpen} animationType="slide" transparent onRequestClose={closeLog}>
+      <KeyboardAvoidingView
+        style={styles.kavContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={0}
+      >
       <View style={styles.backdrop}>
         <View style={styles.sheet}>
           {/* Header */}
@@ -86,7 +91,7 @@ export default function DevLogOverlay() {
           </View>
 
           {view === 'list' ? (
-            <ScrollView style={styles.scroll} contentContainerStyle={styles.listContent}>
+            <ScrollView style={styles.scroll} contentContainerStyle={styles.listContent} keyboardShouldPersistTaps="handled">
               {entries.length === 0 && (
                 <View style={styles.empty}>
                   <MaterialCommunityIcons name="clipboard-text-outline" size={48} color={Colors.border} />
@@ -128,7 +133,7 @@ export default function DevLogOverlay() {
               })}
             </ScrollView>
           ) : (
-            <ScrollView style={styles.scroll} contentContainerStyle={styles.formContent}>
+            <ScrollView style={styles.scroll} contentContainerStyle={styles.formContent} keyboardShouldPersistTaps="handled">
               <Text style={styles.formLabel}>Type</Text>
               <View style={styles.typeRow}>
                 {TYPES.map(t => (
@@ -190,11 +195,13 @@ export default function DevLogOverlay() {
           )}
         </View>
       </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  kavContainer: { flex: 1 },
   backdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.6)',
