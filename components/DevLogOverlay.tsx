@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   View, StyleSheet, ScrollView, TouchableOpacity,
-  Modal, Share, Alert,
+  Modal, Share, Alert, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { Text, TextInput, Button, Chip } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -69,6 +69,10 @@ export default function DevLogOverlay() {
 
   return (
     <Modal visible={isOpen} animationType="slide" transparent onRequestClose={closeLog}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
       <View style={styles.backdrop}>
         <View style={styles.sheet}>
           {/* Header */}
@@ -209,6 +213,7 @@ export default function DevLogOverlay() {
           )}
         </View>
       </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

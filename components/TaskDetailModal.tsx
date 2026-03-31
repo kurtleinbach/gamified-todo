@@ -160,7 +160,8 @@ export default function TaskDetailModal({ task, onClose, onComplete }: Props) {
               {onComplete && (
                 <Button
                   mode="contained"
-                  buttonColor={Colors.purple500}
+                  buttonColor={Colors.xp}
+                  labelStyle={{ color: Colors.bg, fontWeight: '700' }}
                   style={styles.completeBtn}
                   onPress={() => { onComplete(liveTask); onClose(); }}
                   icon="check"

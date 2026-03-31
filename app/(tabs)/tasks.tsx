@@ -30,7 +30,7 @@ export default function TasksScreen() {
 
   const [search, setSearch] = useState('');
   const [filterPriority, setFilterPriority] = useState<FilterPriority>('all');
-  const [sortBy, setSortBy] = useState<SortKey>('created');
+  const [sortBy, setSortBy] = useState<SortKey>('due');
   const [showForm, setShowForm] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [burst, setBurst] = useState<{ xp: number; coins: number; leveledUp: boolean } | null>(null);
