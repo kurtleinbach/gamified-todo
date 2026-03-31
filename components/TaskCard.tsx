@@ -75,9 +75,9 @@ export default function TaskCard({ task, onComplete, onPress, readonly = false }
               <MaterialCommunityIcons
                 name="clock-outline"
                 size={12}
-                color={isOverdue ? Colors.error : Colors.textMuted}
+                color={isOverdue ? Colors.error : Colors.success}
               />
-              <Text style={[styles.dueLabel, isOverdue && styles.overdue]}>
+              <Text style={[styles.dueLabel, isOverdue ? styles.overdue : styles.dueSoon]}>
                 {new Date(task.dueDate).toLocaleDateString()}
               </Text>
             </View>
@@ -129,6 +129,7 @@ const styles = StyleSheet.create({
   dueBadge: { flexDirection: 'row', alignItems: 'center', gap: 3 },
   dueLabel: { color: Colors.textMuted, fontSize: 11 },
   overdue: { color: Colors.error },
+  dueSoon: { color: Colors.success },
   xpBadge: {},
   xpLabel: { color: Colors.xp, fontSize: 11, fontWeight: '700' },
 });

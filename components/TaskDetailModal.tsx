@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   View, StyleSheet, ScrollView, Modal,
-  TouchableOpacity, Alert,
+  TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { Text, TextInput, Button, Checkbox } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -31,9 +31,10 @@ export default function TaskDetailModal({ task, onClose, onComplete }: Props) {
   const meta = PriorityMeta[liveTask.priority];
 
   async function handleAddSubtask() {
-    if (!newSubtask.trim()) return;
-    await addSubtask(liveTask.id, newSubtask.trim());
+    const text = newSubtask.trim();
+    if (!text) return;
     setNewSubtask('');
+    await addSubtask(liveTask.id, text);
   }
 
   function handleDelete() {
@@ -49,6 +50,10 @@ export default function TaskDetailModal({ task, onClose, onComplete }: Props) {
   return (
     <>
       <Modal visible animationType="slide" transparent onRequestClose={onClose}>
+        <KeyboardAvoidingView
+          style={styles.keyboardAvoid}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
         <View style={styles.backdrop}>
           <View style={styles.sheet}>
             {/* Header */}
@@ -66,7 +71,7 @@ export default function TaskDetailModal({ task, onClose, onComplete }: Props) {
               </TouchableOpacity>
             </View>
 
-            <ScrollView contentContainerStyle={styles.content}>
+            <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
               {/* Meta */}
               <View style={styles.metaRow}>
                 <View style={[styles.badge, { backgroundColor: meta.color + '22', borderColor: meta.color + '66' }]}>
@@ -87,12 +92,17 @@ export default function TaskDetailModal({ task, onClose, onComplete }: Props) {
                 </View>
               ) : null}
 
-              {liveTask.dueDate ? (
-                <View style={styles.infoRow}>
-                  <MaterialCommunityIcons name="clock-outline" size={14} color={Colors.textMuted} />
-                  <Text style={styles.infoText}>Due: {new Date(liveTask.dueDate).toLocaleDateString()}</Text>
-                </View>
-              ) : null}
+              {liveTask.dueDate ? (() => {
+                const isPastDue = !liveTask.isCompleted && new Date(liveTask.dueDate) < new Date();
+                return (
+                  <View style={styles.infoRow}>
+                    <MaterialCommunityIcons name="clock-outline" size={14} color={isPastDue ? Colors.error : Colors.success} />
+                    <Text style={[styles.infoText, { color: isPastDue ? Colors.error : Colors.success }]}>
+                      Due: {new Date(liveTask.dueDate).toLocaleDateString()}
+                    </Text>
+                  </View>
+                );
+              })() : null}
 
               {liveTask.isRecurring ? (
                 <View style={styles.infoRow}>
@@ -172,6 +182,7 @@ export default function TaskDetailModal({ task, onClose, onComplete }: Props) {
             </ScrollView>
           </View>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       <TaskFormModal
@@ -186,6 +197,7 @@ export default function TaskDetailModal({ task, onClose, onComplete }: Props) {
 }
 
 const styles = StyleSheet.create({
+  keyboardAvoid: { flex: 1 },
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
   sheet: {
     backgroundColor: Colors.surface,
