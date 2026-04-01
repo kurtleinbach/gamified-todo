@@ -57,6 +57,20 @@ export interface Quest {
   date: string;
 }
 
+export interface ShoppingSection {
+  id: string;
+  name: string;
+  sortOrder: number;
+}
+
+export interface ShoppingItem {
+  id: string;
+  sectionId: string;
+  name: string;
+  isChecked: boolean;
+  sortOrder: number;
+}
+
 export type DevLogType = 'feature' | 'bug' | 'improvement' | 'note';
 
 export interface DevLogEntry {

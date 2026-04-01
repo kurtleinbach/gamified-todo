@@ -9,6 +9,7 @@ import { useTaskStore } from '@/store/taskStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useQuestStore } from '@/store/questStore';
 import { useDevLogStore } from '@/store/devLogStore';
+import { useShoppingStore } from '@/store/shoppingStore';
 import { requestNotificationPermissions, scheduleDailyQuestReminder } from '@/lib/notifications';
 import DevLogOverlay from '@/components/DevLogOverlay';
 
@@ -17,11 +18,12 @@ export default function RootLayout() {
   const loadProfile = useProfileStore(s => s.loadProfile);
   const loadQuests = useQuestStore(s => s.loadQuests);
   const loadEntries = useDevLogStore(s => s.loadEntries);
+  const loadShopping = useShoppingStore(s => s.load);
 
   useEffect(() => {
     async function init() {
       await initDatabase();
-      await Promise.all([loadTasks(), loadProfile(), loadQuests(), loadEntries()]);
+      await Promise.all([loadTasks(), loadProfile(), loadQuests(), loadEntries(), loadShopping()]);
       const granted = await requestNotificationPermissions();
       if (granted) await scheduleDailyQuestReminder();
     }

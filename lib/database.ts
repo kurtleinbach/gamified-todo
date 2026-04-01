@@ -79,6 +79,21 @@ export async function initDatabase(): Promise<void> {
       description TEXT DEFAULT '',
       created_at TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS shopping_sections (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      sort_order INTEGER DEFAULT 0
+    );
+
+    CREATE TABLE IF NOT EXISTS shopping_items (
+      id TEXT PRIMARY KEY,
+      section_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      is_checked INTEGER DEFAULT 0,
+      sort_order INTEGER DEFAULT 0,
+      FOREIGN KEY (section_id) REFERENCES shopping_sections(id) ON DELETE CASCADE
+    );
   `);
 
   // Ensure profile row exists
